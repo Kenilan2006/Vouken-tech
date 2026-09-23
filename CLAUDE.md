@@ -128,11 +128,12 @@ src/
     ├── AdminPage.tsx         # Authenticated CRUD console for all collections.
     └── NotFoundPage.tsx      # Branded 404 route.
 public/                       # Static root files: served at "/" in development, copied to dist/ on build.
+├── favicon.svg               # Browser tab icon: the brand mark, same artwork as src/components/Logo.tsx.
 ├── install-prompt.js         # "Add to Home Screen" banner, styled by .pwa-prompt* rules in src/styles/main.css.
 ├── manifest.json             # Web app manifest (brand colours, standalone display, inline SVG icons).
 ├── offline.html              # Offline fallback for failed navigations.
 └── service-worker.js         # Offline shell caching; /api/* always bypasses the cache.
-index.html                    # HTML metadata, manifest link, Google font loading, injected GenMB auth SDK.
+index.html                    # HTML metadata, favicon and manifest links, Google font loading, injected GenMB auth SDK.
 vite.config.ts                # React and Tailwind Vite plugins.
 package.json                  # Build, type-check, development dependencies and scripts.
 ```
@@ -155,7 +156,7 @@ package.json                  # Build, type-check, development dependencies and 
 - **Accessibility:** Keyboard-visible focus states, semantic navigation, responsive menu controls, dialog focus trap, Escape modal close, and `aria-busy` button loading states are implemented.
 - **SEO baseline:** `PageMeta.tsx` updates per-page title and meta description; `index.html` contains the default launch description.
 - **PWA:** `index.html` links `public/manifest.json`; `src/main.tsx` registers `public/service-worker.js` in production builds only, so dev/HMR responses are never cached. The "Add to Home Screen" banner comes from `public/install-prompt.js` and is styled by the `.pwa-prompt*` rules in `src/styles/main.css`.
-  - The manifest uses inline SVG data-URI icons; do not add fabricated raster icons or install screenshots.
+  - `public/favicon.svg` is the browser tab icon and mirrors the same brand mark as `src/components/Logo.tsx`; the manifest reuses that artwork as inline SVG data-URI icons. Do not add fabricated raster icons, `.ico` files, or install screenshots.
 
 ## Design Guidelines
 - **Visual identity:** A premium modern technology studio — dark, editorial, and confident. Charcoal canvas, oversized display type, generous whitespace, thin hairlines, restrained shadows, and light motion. It must read as AI + digital products + automation + brand + engineering, never as a generic software template, a cyberpunk/gaming site, or an "AI gimmick" page.

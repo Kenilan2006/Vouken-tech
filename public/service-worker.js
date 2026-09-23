@@ -8,6 +8,7 @@ const STATIC_ASSETS = [
   '/index.html',
   '/offline.html',
   '/manifest.json',
+  '/favicon.svg',
   '/install-prompt.js'
 ];
 

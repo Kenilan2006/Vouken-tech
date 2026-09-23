@@ -245,6 +245,7 @@ The site ships a web app manifest, an offline shell, and an "Add to Home Screen"
 
 PWA assets live in `public/` so Vite serves them at the site root in development and copies them into `dist/` on build:
 
+- `public/favicon.svg` — browser tab icon, linked from `index.html`; the manifest icons reuse the same brand mark
 - `public/manifest.json` — app manifest, linked from `index.html`
 - `public/service-worker.js` — offline shell caching; `/api/*` requests always go to the network
 - `public/offline.html` — fallback shown when a navigation fails while offline
