@@ -10,6 +10,18 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Stopgap while the repository's Pages source is still the legacy
+  # "Deploy from a branch" builder: that builder re-publishes the unbuilt
+  # repository root over this artifact deployment, which leaves the deployed URL
+  # showing a blank page (its index.html loads /src/main.tsx, which Pages serves
+  # as an unexecutable octet-stream). Re-deploying whenever that builder
+  # finishes keeps the built site live and newest.
+  # This trigger becomes a no-op once Settings -> Pages -> Build and deployment
+  # -> Source is set to "GitHub Actions", because the legacy builder then stops
+  # running altogether.
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
   # Allows a manual re-deploy from the Actions tab.
   workflow_dispatch:
 
