@@ -1,15 +1,19 @@
 // Service Worker for Vouken Technology Launch
 const CACHE_NAME = 'vouken-technology-launch-cache-v2';
-const OFFLINE_URL = 'offline.html';
+
+// The shell is resolved against this script's own location instead of the domain
+// root, so the same file works at "/" and at a subpath such as "/Vouken-tech/".
+const SHELL_ROOT = new URL('./', self.location).href;
+const OFFLINE_URL = SHELL_ROOT + 'offline.html';
 
 // Files to cache
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/offline.html',
-  '/manifest.json',
-  '/favicon.svg',
-  '/install-prompt.js'
+  SHELL_ROOT,
+  SHELL_ROOT + 'index.html',
+  OFFLINE_URL,
+  SHELL_ROOT + 'manifest.json',
+  SHELL_ROOT + 'favicon.svg',
+  SHELL_ROOT + 'install-prompt.js'
 ];
 
 // Install event - cache static assets (best-effort: a single missing asset

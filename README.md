@@ -217,7 +217,7 @@ Sections alternate between the canvas and `tone-raised`, separated by 1px hairli
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20.19+ or 22.12+ (Vite 8 requirement; the Pages workflow uses Node 22)
 
 ### Running Locally
 
@@ -265,7 +265,7 @@ PWA assets live in `public/` so Vite serves them at the site root in development
 Service workers and installability require a secure context. For local testing:
 
 ```bash
-# Production build + static preview
+# Production build + static preview (served from http://localhost:4173/Vouken-tech/)
 npm run build
 npx vite preview
 
@@ -274,6 +274,29 @@ npx local-web-server --https
 ```
 
 In Chrome DevTools > Application > Service Workers, check "Bypass for network" to exercise the offline fallback page.
+
+## Deploying to GitHub Pages
+
+The live site is **https://kenilan2006.github.io/Vouken-tech/**, published by `.github/workflows/deploy.yml`. The workflow runs on every push to `main` (and can be started manually from the Actions tab); it installs dependencies, type-checks, builds `dist/`, and deploys that folder to GitHub Pages.
+
+### One-time repository setting (required)
+
+Open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. While the legacy "Deploy from a branch" source is selected, GitHub serves the repository source instead of the built site (the raw `index.html` fails to run because `/src/main.tsx` is unbundled) and the workflow's deploy step reports that Pages is not configured for Actions.
+
+### How the build targets the subpath
+
+A project site is served from `/<repository>/`, so `vite.config.ts` sets `PRODUCTION_BASE = '/Vouken-tech/'` for production builds only:
+
+- `npm run dev` keeps serving from `http://localhost:5173/`
+- `npm run build` writes `/Vouken-tech/...` URLs into `dist/` (asset bundles, `favicon.svg`, `manifest.json`, `install-prompt.js`)
+- `npx vite preview` serves the built site from `http://localhost:4173/Vouken-tech/`
+- the service worker resolves its shell URLs relative to its own location, so it needs no change
+
+Change `PRODUCTION_BASE` to `'/'` if the site moves to a custom domain or a `<user>.github.io` repository, and to the new folder name if the repository is renamed.
+
+### Backend-dependent features
+
+GitHub Pages serves static files only. Public pages render from the bundled fallback content in `src/data/content.ts`, but features that call the GenMB backend on the same origin — sign-in (`/api/auth/*`), the admin console (`/api/admin-table`, `/api/kv`) and enquiry submission (`/api/contact/submit`) — need that backend hosted separately if they are to work on the deployed URL.
 
 ## License
 

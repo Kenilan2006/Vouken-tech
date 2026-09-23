@@ -75,6 +75,10 @@ Current managed collections are:
 
 ## File Structure
 ```text
+.github/
+└── workflows/
+    └── deploy.yml            # Builds dist/ and publishes it to GitHub Pages on push to main.
+
 functions/
 ├── adminContent.ts           # Secure CRUD, collection allowlist, slug generation, owner/admin authorization.
 ├── enquiryIntake.ts          # Public contact validation and Enquiries persistence.
@@ -132,7 +136,7 @@ public/                       # Static root files: served at "/" in development,
 ├── install-prompt.js         # "Add to Home Screen" banner, styled by .pwa-prompt* rules in src/styles/main.css.
 ├── manifest.json             # Web app manifest (brand colours, standalone display, inline SVG icons).
 ├── offline.html              # Offline fallback for failed navigations.
-└── service-worker.js         # Offline shell caching; /api/* always bypasses the cache.
+└── service-worker.js         # Offline shell caching; shell URLs resolve relative to the worker location, /api/* always bypasses the cache.
 index.html                    # HTML metadata, favicon and manifest links, Google font loading, injected GenMB auth SDK.
 vite.config.ts                # React and Tailwind Vite plugins.
 package.json                  # Build, type-check, development dependencies and scripts.
@@ -218,6 +222,15 @@ package.json                  # Build, type-check, development dependencies and 
   4. Add a public page/component using `usePublicContent`.
   5. Maintain authorization and validation server-side; never rely on hidden client controls alone.
 - For richer content fields, update all layers together: KV normalization in server functions, admin create/edit form, public type definitions, public rendering, and legacy-data handling.
+
+## Deployment
+- **Host:** GitHub Pages project site at `https://kenilan2006.github.io/Vouken-tech/`, published by `.github/workflows/deploy.yml` on every push to `main` (also startable manually from the Actions tab).
+  - The repository's Pages source must be **GitHub Actions** (Settings → Pages → Build and deployment). With the legacy "Deploy from a branch" source, GitHub serves the unbundled repository `index.html`, which cannot run, and the workflow's deploy step fails.
+  - The workflow runs `npm ci`, `npm run typecheck` and `npm run build`, then uploads `dist/`. Keep `package-lock.json` committed or `npm ci` will fail.
+- **Subpath base:** `vite.config.ts` sets `PRODUCTION_BASE = '/Vouken-tech/'` for production builds only, so `dist/` references `/Vouken-tech/...` while `npm run dev` stays on `http://localhost:5173/`. Update that constant if the site moves to a custom domain (`'/'`) or the repository is renamed.
+  - `src/main.tsx` registers the service worker with `import.meta.env.BASE_URL` and `public/service-worker.js` resolves its shell URLs from its own location, so both follow that base without further edits.
+  - `public/manifest.json` uses `"start_url": "./"` so an installed app opens the site under its own scope.
+- **Static hosting caveat:** Pages cannot run the `functions/` backend. Public pages render from the bundled fallback content in `src/data/content.ts`, but sign-in, the admin console, KV-backed content and enquiry submission need that backend hosted separately.
 
 ## Platform (GenMB)
 

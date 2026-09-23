@@ -8,7 +8,9 @@ import './styles/main.css'
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch(() => {
+    // BASE_URL keeps the worker scope correct when the site is served from a
+    // subpath (for example a GitHub Pages project site at /Vouken-tech/).
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}service-worker.js`).catch(() => {
       /* Offline caching is optional; the site works without a service worker. */
     })
   })
