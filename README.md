@@ -279,9 +279,11 @@ In Chrome DevTools > Application > Service Workers, check "Bypass for network" t
 
 The live site is **https://kenilan2006.github.io/Vouken-tech/**, published by `.github/workflows/deploy.yml`. The workflow runs on every push to `main` (and can be started manually from the Actions tab); it installs dependencies, type-checks, builds `dist/`, and deploys that folder to GitHub Pages.
 
-### One-time repository setting (required)
+### One-time repository setting (recommended)
 
-Open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. While the legacy "Deploy from a branch" source is selected, GitHub serves the repository source instead of the built site (the raw `index.html` fails to run because `/src/main.tsx` is unbundled) and the workflow's deploy step reports that Pages is not configured for Actions.
+Open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**.
+
+Until that is done, GitHub *also* runs its legacy "Deploy from a branch" builder, which publishes the unbuilt repository root to the same Pages site — and that raw `index.html` cannot run, because Pages serves `/src/main.tsx` as an unexecutable octet-stream, so the page stays blank. The legacy build also finishes a few seconds later than a bare build + deploy, so it used to end up as the live site. The workflow therefore waits for the legacy `pages build and deployment` run of the same commit before it publishes, which keeps the built site as the newest deployment. That wait exits immediately once GitHub Actions is the Pages source, and the legacy builder stops running altogether.
 
 ### How the build targets the subpath
 

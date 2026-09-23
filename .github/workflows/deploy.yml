@@ -1,27 +1,18 @@
 # Builds the Vite site and publishes dist/ to GitHub Pages.
 #
-# One-time repository setting (required): Settings -> Pages -> Build and
-# deployment -> Source must be "GitHub Actions". While the legacy
-# "Deploy from a branch" source is selected, this workflow fails at the deploy
-# step because GitHub only accepts Pages deployments from an Actions artifact
-# when that source is set.
+# Repository setting that makes this the only publisher (recommended):
+# Settings -> Pages -> Build and deployment -> Source = "GitHub Actions".
+# Until that is set, GitHub also runs its legacy "Deploy from a branch" builder,
+# which publishes the *unbuilt* repository root to the same Pages site and
+# finishes a few seconds after a bare build+deploy - so that blank page used to
+# become the live site. The "Wait for the legacy branch Pages builder" step below
+# makes this workflow publish last instead, and it exits immediately once the
+# Pages source is switched to GitHub Actions.
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  # Stopgap while the repository's Pages source is still the legacy
-  # "Deploy from a branch" builder: that builder re-publishes the unbuilt
-  # repository root over this artifact deployment, which leaves the deployed URL
-  # showing a blank page (its index.html loads /src/main.tsx, which Pages serves
-  # as an unexecutable octet-stream). Re-deploying whenever that builder
-  # finishes keeps the built site live and newest.
-  # This trigger becomes a no-op once Settings -> Pages -> Build and deployment
-  # -> Source is set to "GitHub Actions", because the legacy builder then stops
-  # running altogether.
-  workflow_run:
-    workflows: ["pages build and deployment"]
-    types: [completed]
   # Allows a manual re-deploy from the Actions tab.
   workflow_dispatch:
 
@@ -29,6 +20,9 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  # Read-only access to workflow runs, used by the ordering step below to see
+  # when the legacy Pages build for this commit has finished.
+  actions: read
 
 # Let an in-progress production deploy finish; queue at most one run behind it.
 concurrency:
@@ -56,6 +50,37 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # The legacy branch builder is a *dynamic* workflow, so it emits no
+      # workflow_run event that could reorder this workflow; waiting for its run
+      # of the same commit is what guarantees the built site is published last.
+      # This step exits immediately once Pages publishes from GitHub Actions.
+      - name: Wait for the legacy branch Pages builder
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          build_type=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type' 2>/dev/null || echo legacy)
+          echo "Pages source build_type: ${build_type}"
+          if [ "${build_type}" = "workflow" ]; then
+            echo "Pages already publishes from GitHub Actions; nothing to wait for."
+            exit 0
+          fi
+
+          for attempt in $(seq 1 30); do
+            counts=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${SHA}&per_page=100" \
+              --jq '[.workflow_runs[] | select(.name == "pages build and deployment")] | "\(length) \([.[] | select(.status != "completed")] | length)"' \
+              2>/dev/null || echo "0 0")
+            total=${counts% *}
+            pending=${counts#* }
+            if [ "${pending}" = "0" ] && [ "${total}" != "0" ]; then
+              echo "Legacy Pages build for ${SHA} finished; publishing the built site on top of it."
+              exit 0
+            fi
+            echo "Attempt ${attempt}: ${total} legacy run(s) for this commit, ${pending} still running"
+            sleep 5
+          done
+          echo "Gave up waiting for the legacy Pages build; publishing anyway."
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
