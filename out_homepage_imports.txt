@@ -1,0 +1,4 @@
+IMPORT 1 : import { ArrowRight, ArrowUpRight, Activity, Cpu, FlaskConical, Layers3, Orbit, ShieldCheck } from "lucide-react";
+ID 589 : {/* Identity board — abstract CSS composition using Vouken's own identity */}
+COMPASS 604 : <Compass size={30} aria-hidden="true" />
+ID 606 : <p className="label-mono-tight absolute bottom-4 left-4 text-subtle-foreground">The mark</p>

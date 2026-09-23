@@ -1,0 +1,24 @@
+{
+  "background_color": "#0a0c0b",
+  "theme_color": "#0a0c0b",
+  "display": "standalone",
+  "icons": [
+    {
+      "sizes": "192x192",
+      "purpose": "any maskable",
+      "type": "image/svg+xml",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzAwMDAwMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMzAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlY8L3RleHQ+Cjwvc3ZnPg=="
+    },
+    {
+      "sizes": "512x512",
+      "purpose": "any maskable",
+      "type": "image/svg+xml",
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KICA8cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzAwMDAwMCIvPgogIDx0ZXh0IHg9IjI1NiIgeT0iMzAwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlY8L3RleHQ+Cjwvc3ZnPg=="
+    }
+  ],
+  "orientation": "portrait-primary",
+  "description": "A premium, responsive dark-tech website positioning Vouken Technology as a future-focused digital navigation and engineering partner in Nagercoil.",
+  "short_name": "Vouken",
+  "name": "Vouken Technology Launch",
+  "start_url": "/"
+}

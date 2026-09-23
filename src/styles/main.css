@@ -1,0 +1,570 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Vouken Technology — visual system
+   Charcoal canvas with tonal steps, off-white display type, and a restrained
+   lime accent reserved for highlights, active states, hairlines and labels.
+   ========================================================================== */
+
+:root {
+  /* Canvas — near-black charcoal, never a flat pure black. */
+  --background: #0a0c0b;
+  --surface: #0e1211;
+  --surface-raised: #121615;
+  --card: #111514;
+  --card-foreground: #f2f5f1;
+  --popover: #141918;
+  --popover-foreground: #f2f5f1;
+
+  /* Type — off-white display, muted grey support, subtle technical metadata. */
+  --foreground: #f2f5f1;
+  --ink: #f2f5f1;
+  --muted: #161b19;
+  --muted-foreground: #a4ada6;
+  --subtle-foreground: #7f887f;
+
+  /* Accent — the existing Vouken lime, used sparingly. */
+  --primary: #b8e06d;
+  --primary-foreground: #0b1007;
+  --secondary: #191f1d;
+  --secondary-foreground: #f2f5f1;
+  --accent: #1c2221;
+  --accent-foreground: #f2f5f1;
+
+  /* Structure — thin hairlines at low contrast, stronger on interaction. */
+  --hairline: #1d2321;
+  --border: #1d2321;
+  --border-strong: #2c3432;
+  --input: #1f2624;
+  --ring: #b8e06d;
+  --destructive: #f0836f;
+  --destructive-foreground: #1f0f0b;
+
+  --line-accent: color-mix(in srgb, var(--primary) 38%, transparent);
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-hairline: var(--hairline);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 0.125rem);
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+* { border-color: var(--border); }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Manrope", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button, input, textarea, select { font: inherit; }
+::selection { background: var(--primary); color: var(--primary-foreground); }
+
+/* Thin charcoal scrollbar so the dark canvas stays uninterrupted. */
+* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: var(--background); }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border: 3px solid var(--background); border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--primary) 45%, var(--border-strong)); }
+
+/* ---------------------------------------------------------------- artwork */
+/* Static radial tints only — no animation, no filter, painted once. */
+.glow-field {
+  background:
+    radial-gradient(60% 52% at 16% 0%, rgb(184 224 109 / 0.07), transparent 70%),
+    radial-gradient(44% 44% at 86% 18%, rgb(25 31 29 / 0.8), transparent 72%);
+}
+
+/* Legacy alias: HomePage still references .grid-veil in one tile; share the
+   same static grid paint as .system-grid. */
+.grid-veil, .system-grid {
+  background-image:
+    linear-gradient(rgb(29 35 33 / 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(29 35 33 / 0.5) 1px, transparent 1px);
+  background-size: 92px 92px;
+  opacity: .35;
+}
+
+/* Film grain is decorative and forces a full-surface repaint with blend-mode
+   compositing, so keep it off the default paint path. Pages opt in with the
+   `grain` class; mobile never pays for it. */
+@media (min-width: 1024px) {
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .18;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+}
+
+/* The topography layer is static by default. Animate it only on fine-pointer
+   desktops where the compositor has headroom; touch + small screens stay static. */
+.topography-lines { opacity: .42; }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .topography-lines { animation: terrain-float 24s ease-in-out infinite alternate; transform-origin: center; }
+}
+
+/* Route-map CSS — retained as a quiet option for future sections that want the
+   coordinate/route motif, but not emitted by the default RouteArtwork anymore. */
+
+/* Route-map decoration is static by default. Cap the infinite loops to
+   fine-pointer desktops; mobile and touch stay on the static frame. */
+.route-line { stroke-dasharray: 10 14; }
+.route-line-secondary { stroke-dasharray: 3 12; opacity: .32; }
+.route-beacon { transform-origin: 442px 421px; }
+.route-target { transform-origin: 1022px 166px; }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .route-line { animation: route-draw 24s linear infinite; }
+  .route-line-secondary { animation: route-draw 36s linear infinite reverse; }
+  .route-beacon { animation: beacon-pulse 6s ease-out infinite; }
+  .route-target { animation: target-turn 40s linear infinite; }
+}
+.route-beacon-delayed { transform-origin: 856px 238px; }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .route-beacon-delayed { animation-delay: 3s; }
+}
+
+@keyframes terrain-float { from { transform: translate3d(-10px, 4px, 0); } to { transform: translate3d(12px, -6px, 0); } }
+@keyframes route-draw { to { stroke-dashoffset: -260; } }
+@keyframes beacon-pulse { 0%, 20% { opacity: .12; transform: scale(.7); } 40% { opacity: .75; } 72%, 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes target-turn { to { transform: rotate(360deg); } }
+
+/* -------------------------------------------------------------- typography */
+.display-xl, .display-lg, .display-md, .display-sm { text-wrap: balance; }
+.display-xl { font-size: clamp(2.9rem, 8.4vw, 8.25rem); line-height: .9; letter-spacing: -.055em; font-weight: 800; }
+.display-lg { font-size: clamp(2.3rem, 5.4vw, 4.6rem); line-height: .96; letter-spacing: -.048em; font-weight: 800; }
+.display-md { font-size: clamp(1.8rem, 3.3vw, 2.85rem); line-height: 1.05; letter-spacing: -.04em; font-weight: 800; }
+.display-sm { font-size: clamp(1.25rem, 1.9vw, 1.7rem); line-height: 1.2; letter-spacing: -.03em; font-weight: 700; }
+.lede { font-size: clamp(1.0625rem, 1.15vw, 1.3rem); line-height: 1.7; }
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  font-weight: 400;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+.label-mono-tight { font-family: var(--font-mono); font-size: .6875rem; letter-spacing: .1em; }
+
+/* Oversized editorial numerals, outlined instead of filled. */
+.index-number {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 4.6vw, 4.25rem);
+  line-height: .85;
+  letter-spacing: -.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border-strong);
+  font-variant-numeric: tabular-nums;
+  transition: -webkit-text-stroke-color .4s ease;
+}
+.group:hover .index-number, .group:focus-within .index-number { -webkit-text-stroke-color: var(--line-accent); }
+.index-number-sm { font-size: clamp(1.5rem, 2.4vw, 2.25rem); }
+
+/* --------------------------------------------------------------- sections */
+.section-y { padding-block: clamp(4.5rem, 8.5vw, 8.75rem); }
+.section-y-sm { padding-block: clamp(3rem, 5vw, 5rem); }
+.tone-raised { background: var(--surface); }
+.tone-sunken { background: var(--background); }
+
+/* --------------------------------------------------------------- surfaces */
+.panel {
+  position: relative;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+.panel-bare { background: transparent; }
+.panel-hover { transition: border-color .35s ease, background-color .35s ease; }
+.panel-hover:hover { border-color: var(--border-strong); }
+
+.edge-sweep::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  opacity: 0;
+  transform: scaleX(.25);
+  transform-origin: left;
+  transition: opacity .4s ease, transform .65s cubic-bezier(.2,.8,.2,1);
+}
+.edge-sweep:hover::after, .edge-sweep:focus-visible::after { opacity: .9; transform: scaleX(1); }
+
+/* Detail held back until hover or keyboard focus — editorial, not decorative. */
+.reveal-detail { opacity: 0; transform: translateY(8px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+.group:hover .reveal-detail, .group:focus-within .reveal-detail, .panel-hover:hover .reveal-detail { opacity: 1; transform: none; }
+
+/* Reveal-on-scroll baseline, driven by src/components/Reveal.tsx.
+   Runs once per element (observer disconnects), transform/opacity only.
+   Below-the-fold reveals cost nothing until they enter the viewport. */
+[data-reveal] { opacity: 0; transform: translate3d(0, 22px, 0); transition: opacity .6s cubic-bezier(.2,.8,.2,1), transform .6s cubic-bezier(.2,.8,.2,1); will-change: opacity, transform; }
+[data-reveal].is-visible { opacity: 1; transform: none; will-change: auto; }
+
+/* Direction variants — one shared observer, restrained motion choices. */
+[data-reveal="up"] { transform: translate3d(0, 22px, 0); }
+[data-reveal="left"] { transform: translate3d(-28px, 0, 0); }
+[data-reveal="right"] { transform: translate3d(28px, 0, 0); }
+[data-reveal="scale"] { transform: scale(.96); }
+[data-reveal="number"] { transform: translate3d(0, .7em, 0); transition-duration: .6s; }
+[data-reveal="none"] { transform: none; }
+
+/* Line drawing — scroll-triggered hairlines. Scale-only, so layout never shifts. */
+[data-reveal-line] { transform: scaleX(0); transform-origin: left; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+[data-reveal-line="right"] { transform-origin: right; }
+[data-reveal-line].is-visible { transform: scaleX(1); }
+
+.reveal { animation: reveal .7s cubic-bezier(.2,.8,.2,1) both; }
+.reveal-delay-1 { animation-delay: .1s; }
+.reveal-delay-2 { animation-delay: .2s; }
+.reveal-delay-3 { animation-delay: .3s; }
+
+@keyframes reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+.shutter-panel { overflow: hidden; }
+.shutter-panel::before, .shutter-panel::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: var(--primary);
+}
+.shutter-panel::before { animation: shutter-left .7s cubic-bezier(.2,.8,.2,1) .08s both; }
+.shutter-panel::after { background: var(--secondary); animation: shutter-right .7s cubic-bezier(.2,.8,.2,1) .08s both; }
+.shutter-panel > * { position: relative; z-index: 1; }
+.shutter-kicker { animation: shutter-content .55s cubic-bezier(.2,.8,.2,1) .28s both; }
+@keyframes shutter-left { from { clip-path: inset(0 50% 0 0); } to { clip-path: inset(0 100% 0 0); } }
+@keyframes shutter-right { from { clip-path: inset(0 0 0 50%); } to { clip-path: inset(0 0 0 100%); } }
+@keyframes shutter-content { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ------------------------------------------------------------- links & CTA */
+.link-underline { position: relative; }
+.link-underline::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -.18em 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.link-underline:hover::after, .link-underline:focus-visible::after { transform: scaleX(1); }
+
+.arrow-shift { transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.group:hover .arrow-shift, .group:focus-visible .arrow-shift { transform: translateX(4px); }
+
+/* Large-statement accents: a quiet underline draws when the heading is hovered.
+   Optional by design — applied only to hero-scale statements. */
+.heading-accent { position: relative; }
+.heading-accent::after {
+  content: "";
+  position: absolute;
+  inset: auto .02em -.08em .02em;
+  height: .045em;
+  border-radius: 999px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+h1:hover .heading-accent::after, h2:hover .heading-accent::after { transform: scaleX(1); }
+
+/* -------------------------------------------------------------- cursor dot */
+/* The pointer companion was removed for performance: it ran a perpetual
+   mousemove → rAF loop on desktop for a decorative dot. Kept as display:none
+   so any stray markup never paints. */
+.cursor-dot { display: none !important; }
+
+/* ---------------------------------------------------------------- header */
+/* Transparent at rest; gains a solid tint once the page scrolls. No
+   backdrop-filter transition — animating the filter blurs the whole page
+   every scroll frame. */
+.site-header {
+  transition:
+    background-color .5s cubic-bezier(.2,.8,.2,1),
+    border-color .5s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Desktop nav links: hairline underline grows on hover/focus, holds on active. */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  bottom: .6rem;
+  left: 1rem;
+  height: 1px;
+  background: var(--primary);
+  opacity: .55;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after { transform: scaleX(1); }
+.nav-link[aria-current="page"]::after { opacity: .9; transform: scaleX(1); }
+
+/* Full-screen mobile menu: fade the field in, stagger the entries upward. */
+.mobile-menu { animation: menu-field .4s cubic-bezier(.2,.8,.2,1) both; }
+.mobile-menu-item {
+  animation: menu-entry .55s cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: calc(90ms + var(--item-index, 0) * 55ms);
+}
+@keyframes menu-field { from { opacity: 0; } to { opacity: 1; } }
+@keyframes menu-entry { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+
+/* ---------------------------------------------------------------- marquee */
+/* ------------------------------------------------------------------- hero */
+/* Hero entrance: short transform/opacity only, above-the-fold content paints
+   in one pass. Total sequence ~0.5s so first paint never waits on motion. */
+.hero-enter { animation: reveal .5s cubic-bezier(.2,.8,.2,1) both; }
+.hero-enter-2 { animation-delay: .06s; }
+.hero-enter-3 { animation-delay: .12s; }
+.hero-enter-4 { animation-delay: .18s; }
+.hero-enter-5 { animation: none; }
+
+/* The accent word keeps a hairline underline that draws in after the type. */
+.hero-accent { position: relative; }
+.hero-accent::after {
+  content: "";
+  position: absolute;
+  inset: auto .04em -.08em .04em;
+  height: .05em;
+  border-radius: 999px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: hero-underline .8s cubic-bezier(.2,.8,.2,1) 1.05s both;
+}
+@keyframes hero-underline { to { transform: scaleX(1); } }
+
+/* Slow beacon points were an infinite opacity/scale loop behind the headline.
+   Keep the dots as static decoration; continuous pulsing is not worth the
+   repaint cost on mid-range hardware. */
+.hero-data-point {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--primary);
+  opacity: .5;
+}
+
+/* Scroll cue: a single short transform/opacity loop. Static on touch so
+   mobile pays nothing for a desktop affordance. */
+.hero-scroll-line {
+  position: relative;
+  display: block;
+  width: 1px;
+  height: 44px;
+  overflow: hidden;
+  background: var(--border-strong);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-scroll-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 14px;
+    background: var(--primary);
+    animation: hero-scroll 3s cubic-bezier(.2,.8,.2,1) infinite;
+  }
+}
+@keyframes hero-scroll {
+  0% { transform: translateY(-16px); opacity: 0; }
+  30% { opacity: 1; }
+  75% { transform: translateY(46px); opacity: 0; }
+  100% { transform: translateY(46px); opacity: 0; }
+}
+
+/* ----------------------------------------------------- service rows */
+/* Large editorial service list rows: subtle expansion, accent hairline,
+   drifting index, moving arrow and a fading contour glyph. */
+.service-row { transition: background-color .35s ease; }
+.service-row:hover, .service-row:focus-visible { background-color: rgb(18 22 21 / 0.55); }
+.service-row-accent {
+  height: 1px;
+  background: linear-gradient(90deg, var(--primary), transparent 78%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+.service-row:hover .service-row-accent, .service-row:focus-visible .service-row-accent { transform: scaleX(1); }
+.service-row-visual { opacity: 0; transform: translateX(10px); transition: opacity .45s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+.service-row:hover .service-row-visual, .service-row:focus-visible .service-row-visual { opacity: .85; transform: none; }
+.service-row-visual-line { stroke-dasharray: 5 7; animation: route-draw 9s linear infinite; }
+
+/* ------------------------------------------------------------ process route */
+/* Journey timeline: vertical rail on mobile, horizontal route on desktop. */
+.process-stage { position: relative; padding-left: 1.9rem; }
+.process-stage::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .5rem;
+  bottom: -2.5rem;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--line-accent), var(--hairline) 78%);
+}
+.process-stage-final::before { top: .5rem; bottom: auto; height: 1.4rem; }
+.process-node {
+  position: absolute;
+  left: 0;
+  top: .55rem;
+  width: .7rem;
+  height: .7rem;
+  margin-left: -.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-accent);
+  background: var(--background);
+}
+.process-node::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 72%, transparent);
+}
+.process-stage-final .process-node::after { background: var(--primary); }
+
+@media (min-width: 1024px) {
+  .process-stage { padding-left: 0; padding-top: 3.25rem; }
+  .process-stage::before { display: none; }
+  .process-node { top: 1.5rem; margin-left: 0; }
+}
+
+.marquee { overflow: hidden; contain: layout paint; }
+.marquee-track { display: flex; width: max-content; transform: translateZ(0); animation: marquee 60s linear infinite; will-change: transform; }
+.marquee:hover .marquee-track, .marquee:focus-within .marquee-track, .marquee-track.is-paused { animation-play-state: paused; }
+.marquee-track > * { flex: none; }
+@keyframes marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+/* Coarse pointers get a static ticker: an infinite loop buys nothing on touch. */
+@media (hover: none), (pointer: coarse) {
+  .marquee-track { animation: none; }
+}
+
+/* ------------------------------------------------------------ process rail */
+.rail { position: relative; padding-left: 1.9rem; }
+.rail::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .4rem;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--line-accent), var(--hairline) 58%, transparent);
+}
+.rail-node {
+  position: absolute;
+  left: -.34rem;
+  top: .5rem;
+  width: .7rem;
+  height: .7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-accent);
+  background: var(--background);
+}
+
+/* Add-to-home-screen prompt rendered by public/install-prompt.js */
+.pwa-prompt {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .85rem 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--background) 60%, transparent);
+  animation: reveal .45s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.pwa-prompt-copy { flex: 1 1 12rem; }
+.pwa-prompt-title { margin: 0; font-size: .95rem; font-weight: 700; }
+.pwa-prompt-detail { margin: .35rem 0 0; font-size: .8rem; line-height: 1.5; color: var(--muted-foreground); }
+.pwa-prompt-actions { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
+.pwa-prompt-button, .pwa-prompt-dismiss {
+  padding: .55rem .9rem;
+  border-radius: .5rem;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .2s cubic-bezier(.2,.8,.2,1), border-color .2s ease, color .2s ease;
+}
+.pwa-prompt-button { border: 1px solid transparent; background: var(--primary); color: var(--primary-foreground); }
+.pwa-prompt-dismiss { border: 1px solid var(--border); background: transparent; color: var(--muted-foreground); }
+.pwa-prompt-button:hover, .pwa-prompt-dismiss:hover { transform: translateY(-1px); }
+.pwa-prompt-dismiss:hover { color: var(--card-foreground); }
+.pwa-prompt-button:active, .pwa-prompt-dismiss:active { transform: scale(.98); }
+.pwa-prompt-button:focus-visible, .pwa-prompt-dismiss:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+@media (min-width: 640px) {
+  .pwa-prompt { left: auto; right: 1.5rem; bottom: 1.5rem; width: 24rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Reveal and hover states resolve immediately instead of animating in. */
+  [data-reveal], .reveal-detail { opacity: 1 !important; transform: none !important; }
+  .panel-hover:hover { transform: none; }
+  .marquee-track, .topography-lines, .route-line, .route-line-secondary, .route-beacon, .route-target { animation: none; }
+  .mobile-menu, .mobile-menu-item { animation: none; }
+  .hero-enter, .hero-accent::after, .hero-scroll-line::after { animation: none; }
+  .hero-accent::after { transform: scaleX(1); }
+  .service-row:hover, .service-row:focus-visible { transform: none; }
+  .service-row-visual, .service-row-visual-line { animation: none; transition: none; }
+  .service-row-visual { opacity: 0; }
+  [data-reveal-line] { opacity: 1 !important; transform: scaleX(1) !important; }
+  .cursor-dot { display: none !important; }
+  html { scroll-behavior: auto; }
+}
