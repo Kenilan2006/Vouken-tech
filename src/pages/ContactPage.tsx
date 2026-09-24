@@ -8,6 +8,7 @@ import RevealLine from "../components/RevealLine";
 import RouteArtwork from "../components/RouteArtwork";
 import Section from "../components/Section";
 import ShutterModal from "../components/ShutterModal";
+import SocialLinks from "../components/SocialLinks";
 import { getErrorMessage } from "../lib/utils";
 import { useToast } from "../components/ToastProvider";
 
@@ -136,6 +137,10 @@ export default function ContactPage() {
                 Nagercoil, Tamil Nadu, India
               </span>
             </p>
+            <div className="mt-8 border-t border-hairline pt-6">
+              <p className="label-mono-tight text-subtle-foreground">Instagram</p>
+              <SocialLinks className="mt-3 flex flex-wrap gap-x-6 gap-y-1" />
+            </div>
             <div className="mt-10 border-t border-hairline pt-6">
               <p className="label-mono-tight text-subtle-foreground">What happens next</p>
               <ol className="mt-5 space-y-4">

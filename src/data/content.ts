@@ -299,6 +299,20 @@ export const navigation = [
   { label: 'Insights', to: '/insights' },
 ]
 
+/**
+ * Official Vouken channels, rendered by the footer and the contact page.
+ * `handle` is the public account name shown to visitors; `href` is the canonical
+ * profile URL — keep it free of share/tracking query parameters.
+ */
+export const socialLinks = [
+  {
+    id: 'instagram',
+    label: 'Instagram',
+    handle: '@vouken.tech',
+    href: 'https://www.instagram.com/vouken.tech',
+  },
+] as const
+
 export const adminCollections = [
   'Services',
   'Projects',

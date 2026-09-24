@@ -2,6 +2,7 @@ import { ArrowUpRight, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import Reveal from "./Reveal";
+import SocialLinks from "./SocialLinks";
 
 const links = [
   { label: "Services", to: "/services" },
@@ -56,6 +57,8 @@ export default function Footer() {
             <Mail size={15} aria-hidden="true" className="text-primary" />
             voukentechnology@gmail.com
           </a>
+          <p className="label-mono-tight mt-6 text-subtle-foreground">Follow</p>
+          <SocialLinks className="mt-2 flex flex-wrap gap-x-6 gap-y-1" />
         </div>
         <nav aria-label="Footer" className="mt-12 lg:mt-0">
           <p className="label-mono-tight text-subtle-foreground">Menu</p>

@@ -114,6 +114,7 @@ src/
 │   ├── ScrollProgress.tsx    # Hairline reading-progress rail pinned to the viewport top.
 │   ├── Section.tsx           # Section shell: tone, hairline dividers, rhythm, index/label rail.
 │   ├── SectionHeading.tsx    # Eyebrow/index + display heading + supporting copy.
+│   ├── SocialLinks.tsx       # Official channel links (Instagram) driven by `socialLinks` in src/data/content.ts.
 │   └── ToastProvider.tsx     # Global toast state and notifications.
 └── pages/
     ├── HomePage.tsx          # Homepage journey and launch positioning.
@@ -137,7 +138,7 @@ public/                       # Static root files: served at "/" in development,
 ├── manifest.json             # Web app manifest (brand colours, standalone display, inline SVG icons).
 ├── offline.html              # Offline fallback for failed navigations.
 └── service-worker.js         # Offline shell caching; shell URLs resolve relative to the worker location, /api/* always bypasses the cache.
-index.html                    # HTML metadata, favicon and manifest links, Google font loading, injected GenMB auth SDK.
+index.html                    # HTML metadata, favicon and manifest links, Google font loading, Organization JSON-LD (sameAs social profiles), injected GenMB auth SDK.
 vite.config.ts                # React and Tailwind Vite plugins.
 package.json                  # Build, type-check, development dependencies and scripts.
 ```
